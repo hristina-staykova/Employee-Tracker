@@ -15,7 +15,8 @@ VALUES
     ("Salesperson", 1200.00, 2),
     ("Marketing Lead", 1450.00, 3),
 	("Marketing Specialist", 1300.00, 3),
-    ("HR Manager", 1500.00, 4);
+    ("HR Manager", 1500.00, 4),
+    ("HR Assistant", 1000.00, 4);
 
 INSERT INTO employee
     (first_name, last_name, role_id, manager_id)
@@ -27,6 +28,9 @@ VALUES
     ("Miley", "Cyrus", 5, 4),
 	("John", "Travolta", 5, 4),
     ("Leonardo", "DiCaprio", 6, null),
-    ("Beyonce", "Knowles", 3, 2);
+    ("Brad", "Pitt", 3, 2),
+    ("Mariah", "Carey", 1, null),
+    ("Beyonce", "Knowles", 7, 7),
+    ("Jim", "Carey", 3, 2);
 
 -- employee.role_id = job_position.id; employee.manager_id = employee.id; 

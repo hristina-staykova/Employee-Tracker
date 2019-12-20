@@ -36,17 +36,9 @@ SELECT employee.id, first_name, last_name, job_position.title, job_position.sala
 FROM employee
 LEFT JOIN job_position ON employee.role_id = job_position.id
 LEFT JOIN department ON department.id = job_position.department_id
-WHERE department.id = 4;
-
--- view departments & roles
-SELECT * FROM department;
-SELECT id, title, department_id FROM job_position;
+WHERE department.id = 2;
 
 -- add department, role, employee:
-INSERT INTO department
-    (dept_name)
-VALUES
-    ("NEW DEPARTMENT");
     
 INSERT INTO job_position
     (title, salary, department_id)

@@ -17,12 +17,15 @@ const mainOptions = [
     message: "What would you like to do",
     choices: [
       "View All Employees",
+      "View All Departments",
+      "View All Roles",
+      "Add New Department",
       "View All Employees by Dept.",
-      "View All Employees By Manager",
-      "Add Employee",
-      "Remove Employee",
-      "Update Employee Role",
-      "Update Employee Manager"
+      // "View All Employees By Manager",
+      // "Add Employee",
+      "Remove Employee"
+      // "Update Employee Role",
+      // "Update Employee Manager"
     ]
   }
 ];
@@ -58,38 +61,111 @@ function viewAllData() {
     "SELECT employee.id, first_name, last_name, job_position.title, department.dept_name, job_position.salary, employee.manager_id FROM employee LEFT JOIN job_position ON employee.role_id = job_position.id LEFT JOIN department ON department.id = job_position.department_id;",
     function(err, result) {
       if (err) throw err;
-      console.log(result);
       console.table(result);
     }
   );
+}
+
+function viewAllDepts() {
+  connection.query("SELECT * FROM department;", function(err, result) {
+    if (err) throw err;
+    console.table(result);
+  });
+}
+
+function viewAllRoles() {
+  connection.query(
+    "SELECT id, title, department_id FROM job_position;",
+    function(err, result) {
+      if (err) throw err;
+      console.table(result);
+    }
+  );
+}
+
+async function addDept() {
+  const deptInfo = await inquirer.prompt({
+    name: "deptName",
+    type: "input",
+    message: "What is the department's name?"
+  });
+
+  connection.query(
+    "INSERT INTO department (dept_name) VALUES (?);",
+    deptInfo.deptName,
+    function(err, result) {
+      if (err) throw err;
+      console.log("Department " + deptInfo.deptName + " was added.");
+    }
+  );
+}
+
+async function viewEmplByDept() {
+  const deptInfo = await inquirer.prompt({
+    name: "deptID",
+    type: "input",
+    message: "Enter department's ID?"
+  });
+
+  connection.query(
+    `SELECT employee.id, first_name, last_name, job_position.title, job_position.salary, employee.manager_id
+    FROM employee
+    LEFT JOIN job_position ON employee.role_id = job_position.id
+    LEFT JOIN department ON department.id = job_position.department_id
+    WHERE department.id = ?;`,
+    deptInfo.deptID,
+    function(err, result) {
+      if (err) throw err;
+      console.table(result);
+    }
+  );
+}
+
+async function removeEmpl() {
+  const empl = await inquirer.prompt({
+    name: "id",
+    type: "input",
+    message: "Enter employee's ID: "
+  });
+
+  connection.query(`DELETE FROM employee WHERE id = ?;`, empl.id, function(
+    err,
+    result
+  ) {
+    if (err) throw err;
+    console.log("Employee with ID: " + empl.id + " was removed.");
+  });
 }
 
 async function main() {
   const options = await inquirer.prompt(mainOptions);
 
   switch (options.action) {
-    case "View All Employees":
-      viewAllData();
+    case "Remove Employee":
+      removeEmpl();
       break;
 
     case "View All Employees by Dept.":
-      // function ""View All Employees by Dept.";
+      viewEmplByDept();
       break;
 
-    case "View All Employees by Manager":
-      // function "View All Employees by Dept.";
+    case "Add New Department":
+      addDept();
       break;
 
-    case "Add Employee":
-      // function ""Add Employee";
+    case "View All Roles":
+      viewAllRoles();
       break;
 
-    case "Remove Employee":
-    // function "Remove Employee";
+    case "View All Departments":
+      viewAllDepts();
+      break;
+
+    case "View All Employees":
+      viewAllData();
   }
 }
 
-main();
+connection.connect();
 
-// //here come all the functions
-// mysql.connect();
+main();
